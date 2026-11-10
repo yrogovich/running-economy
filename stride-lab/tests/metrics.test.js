@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {cadenceFromSignal,oxygenCost,analyzeFrames,recommendations} from '../dist/metrics.js';
+const signal=(cadence=174)=>Array.from({length:450},(_,i)=>({t:i/30,value:Math.sin(2*Math.PI*(cadence/120)*i/30)}));
+test('oxygen cost uses speed in km/h and rejects invalid inputs',()=>{assert.equal(oxygenCost(35,10),210);assert.equal(oxygenCost(35,0),null);assert.equal(oxygenCost(NaN,10),null);});
+test('stride periodicity produces steps rather than strides per minute',()=>{for(const spm of [120,150,174,200,220])assert.ok(Math.abs(cadenceFromSignal(signal(spm)).spm-spm)<7);});
+test('stationary, short, irregular and broken signals do not produce cadence',()=>{assert.equal(cadenceFromSignal(signal().map(s=>({...s,value:0}))),null);assert.equal(cadenceFromSignal(signal().slice(0,60)),null);assert.equal(cadenceFromSignal(signal().filter((_,i)=>i!==200)),null);assert.equal(cadenceFromSignal(signal().map((s,i)=>({...s,value:i===50?NaN:s.value}))),null);});
+test('missing landmarks fail quality gating and only suggest rerecording',()=>{const r=analyzeFrames(Array.from({length:300},(_,i)=>({t:i/30,points:null})),'side',1920,1080);assert.equal(r.usable,false);assert.equal(r.cadence,null);assert.equal(recommendations(r).length,1);});
+test('angles account for image aspect ratio and front clips never infer cadence',()=>{const points=Array.from({length:33},()=>({x:.5,y:.5,visibility:1}));points[11]={x:.3,y:.2,visibility:1};points[12]={x:.5,y:.2,visibility:1};points[23]={x:.4,y:.6,visibility:1};points[24]={x:.6,y:.6,visibility:1};const frames=Array.from({length:300},(_,i)=>({t:i/30,points}));const r=analyzeFrames(frames,'side',2000,1000);assert.ok(Math.abs(r.trunk-26.565)<.01);assert.equal(analyzeFrames(frames,'front',2000,1000).cadence,null);});

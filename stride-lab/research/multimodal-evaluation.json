@@ -1,0 +1,189 @@
+{
+  "target": "gross energy cost in kcal/kg/km",
+  "protocolSpeedSource": "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1666616/full",
+  "protocolSpeedsAreInferred": true,
+  "rowsFromOnePrespecifiedViewPerRunnerIntensity": 2334,
+  "runners": 18,
+  "validation": "nested leave-one-runner-out; runner-weighted fits and scoring",
+  "families": {
+    "speed": {
+      "runnerMeanRelativeError": 0.2364862676565361,
+      "worstRunnerMeanRelativeError": 0.6899112043852187,
+      "runnerMedianRelativeError": 0.22010620886650162,
+      "meanAbsoluteErrorKcalKgKm": 0.2109511868277964,
+      "absoluteError90thPercentileKcalKgKm": 0.43373127657858573,
+      "minimumPrediction": 0.9892954031810505,
+      "maximumPrediction": 1.182828174884783
+    },
+    "speed_hr": {
+      "runnerMeanRelativeError": 0.2296093850270623,
+      "worstRunnerMeanRelativeError": 0.7992077077470983,
+      "runnerMedianRelativeError": 0.2011935871102458,
+      "meanAbsoluteErrorKcalKgKm": 0.20890886727149,
+      "absoluteError90thPercentileKcalKgKm": 0.43547748097303124,
+      "minimumPrediction": 0.6414749640342121,
+      "maximumPrediction": 1.447255406696286
+    },
+    "speed_hr_profile": {
+      "runnerMeanRelativeError": 0.2534363220961619,
+      "worstRunnerMeanRelativeError": 1.0076687194337153,
+      "runnerMedianRelativeError": 0.19435930846644373,
+      "meanAbsoluteErrorKcalKgKm": 0.224244699277309,
+      "absoluteError90thPercentileKcalKgKm": 0.4601951684228531,
+      "minimumPrediction": 0.8464415979495753,
+      "maximumPrediction": 1.3862352203592425
+    }
+  },
+  "nestedSelection": {
+    "runnerMeanRelativeError": 0.2296093850270623,
+    "worstRunnerMeanRelativeError": 0.7992077077470983,
+    "runnerMedianRelativeError": 0.2011935871102458,
+    "meanAbsoluteErrorKcalKgKm": 0.20890886727149,
+    "absoluteError90thPercentileKcalKgKm": 0.43547748097303124,
+    "minimumPrediction": 0.6414749640342121,
+    "maximumPrediction": 1.447255406696286
+  },
+  "folds": [
+    {
+      "runnerFold": 1,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 118
+    },
+    {
+      "runnerFold": 2,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 121
+    },
+    {
+      "runnerFold": 3,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 39
+    },
+    {
+      "runnerFold": 4,
+      "selectedFamily": "speed_hr",
+      "alpha": 1000,
+      "observations": 237
+    },
+    {
+      "runnerFold": 5,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 362
+    },
+    {
+      "runnerFold": 6,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 109
+    },
+    {
+      "runnerFold": 7,
+      "selectedFamily": "speed_hr",
+      "alpha": 1,
+      "observations": 114
+    },
+    {
+      "runnerFold": 8,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 105
+    },
+    {
+      "runnerFold": 9,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 91
+    },
+    {
+      "runnerFold": 10,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 120
+    },
+    {
+      "runnerFold": 11,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 121
+    },
+    {
+      "runnerFold": 12,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 116
+    },
+    {
+      "runnerFold": 13,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 196
+    },
+    {
+      "runnerFold": 14,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 7
+    },
+    {
+      "runnerFold": 15,
+      "selectedFamily": "speed_hr",
+      "alpha": 1000,
+      "observations": 121
+    },
+    {
+      "runnerFold": 16,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 52
+    },
+    {
+      "runnerFold": 17,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 66
+    },
+    {
+      "runnerFold": 18,
+      "selectedFamily": "speed_hr",
+      "alpha": 100,
+      "observations": 239
+    }
+  ],
+  "limits": [
+    "Exploratory reuse of one dataset; not external validation.",
+    "Views with equal filename times can have different metabolic labels; used one prespecified side view per runner/intensity instead of assuming synchronization.",
+    "Protocol speeds inferred from sex code and intensity, not measured treadmill-speed records.",
+    "300\u20131500 second windows are assumed exercise; metabolic steady state must be checked.",
+    "Rows with unavailable or implausible HR outside 30\u2013240 bpm were excluded before fitting and scoring all models.",
+    "Heart rate depends on temperature, fatigue, medication and individual physiology.",
+    "Dataset population and treadmill conditions may not match user.",
+    "Error percentile is descriptive, not a calibrated prediction interval."
+  ],
+  "deploymentApproved": false,
+  "inputRanges": {
+    "speed": [
+      7.0,
+      12.0
+    ],
+    "heart_rate": [
+      50.0,
+      200.0
+    ],
+    "age": [
+      18.8357255795807,
+      34.0
+    ],
+    "weight": [
+      45.0,
+      107.0
+    ],
+    "height": [
+      155.0,
+      187.0
+    ]
+  }
+}

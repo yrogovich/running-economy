@@ -1,0 +1,188 @@
+{
+  "target": "gross metabolic energy rate, kcal/kg/min (NOT yet running economy)",
+  "featureNames": [
+    "hip_vertical_span",
+    "hip_vertical_speed",
+    "ankle_separation_span",
+    "ankle_separation_speed",
+    "knee_angle_median",
+    "knee_angle_span",
+    "trunk_tilt_median",
+    "trunk_tilt_span",
+    "ankle_vertical_span",
+    "ankle_vertical_speed",
+    "stride_spectral_hz",
+    "stride_spectral_concentration"
+  ],
+  "excluded": [
+    {
+      "id": "403dec8846bbb821",
+      "split": "valid",
+      "coverage": 0.0
+    },
+    {
+      "id": "12e874eb5609cf25",
+      "split": "valid",
+      "coverage": 0.05
+    },
+    {
+      "id": "54c17a7e2f60a30b",
+      "split": "test",
+      "coverage": 0.7933333333333333
+    },
+    {
+      "id": "043850bba28f2232",
+      "split": "valid",
+      "coverage": 0.6333333333333333
+    },
+    {
+      "id": "6478b7f35fc501de",
+      "split": "train",
+      "coverage": 0.0
+    },
+    {
+      "id": "320e85a7b162944d",
+      "split": "train",
+      "coverage": 0.49
+    },
+    {
+      "id": "1b51ddcae28377e5",
+      "split": "valid",
+      "coverage": 0.47333333333333333
+    },
+    {
+      "id": "c54aa7c7f5d60f16",
+      "split": "valid",
+      "coverage": 0.42
+    },
+    {
+      "id": "fc98af406b4a1c20",
+      "split": "train",
+      "coverage": 0.0
+    },
+    {
+      "id": "25d51038a38df0cd",
+      "split": "train",
+      "coverage": 0.7966666666666666
+    },
+    {
+      "id": "dc22308d61945ff5",
+      "split": "train",
+      "coverage": 0.32
+    },
+    {
+      "id": "92de982fe81d4c64",
+      "split": "train",
+      "coverage": 0.14
+    },
+    {
+      "id": "9d966a09acdda8af",
+      "split": "valid",
+      "coverage": 0.056666666666666664
+    },
+    {
+      "id": "2b713e6603f22cae",
+      "split": "valid",
+      "coverage": 0.12333333333333334
+    },
+    {
+      "id": "f3383ccecb6b84c2",
+      "split": "train",
+      "coverage": 0.6366666666666667
+    }
+  ],
+  "selectionCount": 46,
+  "includedCount": 31,
+  "models": {
+    "constant": {
+      "trainingMedian": 0.17904255319148935,
+      "valid": {
+        "clips": 5,
+        "participants": 2,
+        "maeKcalKgMin": 0.02384394726833449,
+        "meanRelativeError": 0.1446865029553484,
+        "participantMeanRelativeError": 0.24176018805071725,
+        "worstParticipantMeanRelativeError": 0.40354966320966534,
+        "maxAbsoluteErrorKcalKgMin": 0.05147845062738679
+      },
+      "test": {
+        "clips": 7,
+        "participants": 3,
+        "maeKcalKgMin": 0.03922822305626328,
+        "meanRelativeError": 0.30882398347387247,
+        "participantMeanRelativeError": 0.2711900975362285,
+        "worstParticipantMeanRelativeError": 0.4644519183579201,
+        "maxAbsoluteErrorKcalKgMin": 0.06422327608305561
+      }
+    },
+    "context": {
+      "alpha": 10,
+      "trainingLeaveOneRunnerOutMAE": 0.0356135325334702,
+      "valid": {
+        "clips": 5,
+        "participants": 2,
+        "maeKcalKgMin": 0.018822822964221865,
+        "meanRelativeError": 0.12932097159917205,
+        "participantMeanRelativeError": 0.27063219374168984,
+        "worstParticipantMeanRelativeError": 0.5061508973125528,
+        "maxAbsoluteErrorKcalKgMin": 0.06456668497769102
+      },
+      "test": {
+        "clips": 7,
+        "participants": 3,
+        "maeKcalKgMin": 0.0242542041963531,
+        "meanRelativeError": 0.17848393489726305,
+        "participantMeanRelativeError": 0.17466763567745724,
+        "worstParticipantMeanRelativeError": 0.21469978783382881,
+        "maxAbsoluteErrorKcalKgMin": 0.060848581069911534
+      }
+    },
+    "pose": {
+      "alpha": 10,
+      "trainingLeaveOneRunnerOutMAE": 0.03320807427775164,
+      "valid": {
+        "clips": 5,
+        "participants": 2,
+        "maeKcalKgMin": 0.056029229563785664,
+        "meanRelativeError": 0.41088060026306367,
+        "participantMeanRelativeError": 0.9396899735119197,
+        "worstParticipantMeanRelativeError": 1.8210389289266797,
+        "maxAbsoluteErrorKcalKgMin": 0.23229919670282645
+      }
+    },
+    "context_pose": {
+      "alpha": 10,
+      "trainingLeaveOneRunnerOutMAE": 0.03174311228656642,
+      "valid": {
+        "clips": 5,
+        "participants": 2,
+        "maeKcalKgMin": 0.0451053664758368,
+        "meanRelativeError": 0.31522353058960123,
+        "participantMeanRelativeError": 0.6601784826049096,
+        "worstParticipantMeanRelativeError": 1.2351034026304235,
+        "maxAbsoluteErrorKcalKgMin": 0.1575548571304194
+      },
+      "test": {
+        "clips": 7,
+        "participants": 3,
+        "maeKcalKgMin": 0.06380427746312756,
+        "meanRelativeError": 0.4830559491123601,
+        "participantMeanRelativeError": 0.40028007856473047,
+        "worstParticipantMeanRelativeError": 0.5984617916890456,
+        "maxAbsoluteErrorKcalKgMin": 0.17229673367575377
+      }
+    }
+  },
+  "limitations": [
+    "Exploratory small sample; not clinical validation.",
+    "No explicit verified speed field; economy conversion not performed.",
+    "First candidate-window selection assumed steady exercise; metabolic steady state not independently confirmed.",
+    "Three test runners at most; no population-calibrated prediction interval.",
+    "Python CPU extraction may differ from browser GPU extraction.",
+    "Intensity category used only for research context baseline; not a verified km/h field."
+  ],
+  "deploymentApproved": false,
+  "selectedUsingValidationOnly": "context_pose",
+  "selectionRule": "Choose pose-containing family by validation runner-averaged relative error; alpha tuned only on training runner folds.",
+  "testPolicy": "Test runners evaluated only for the validation-selected candidate and prespecified baselines. No tuning after test."
+}

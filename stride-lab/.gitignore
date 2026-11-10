@@ -1,0 +1,6 @@
+.DS_Store
+node_modules/
+.openai/*.local.json
+*.tar.gz
+research/data/
+research/__pycache__/

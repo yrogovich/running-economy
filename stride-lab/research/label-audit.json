@@ -1,0 +1,60 @@
+{
+  "annotationCount": 16526,
+  "uniquePaths": 16526,
+  "splits": {
+    "train": {
+      "runningClips": 4150,
+      "runningParticipants": 12,
+      "views": {
+        "back": 2133,
+        "left": 1466,
+        "right": 551
+      },
+      "missingAnnotations": 0
+    },
+    "valid": {
+      "runningClips": 1480,
+      "runningParticipants": 5,
+      "views": {
+        "back": 740,
+        "right": 313,
+        "left": 427
+      },
+      "missingAnnotations": 0
+    },
+    "test": {
+      "runningClips": 1129,
+      "runningParticipants": 3,
+      "views": {
+        "back": 483,
+        "right": 181,
+        "left": 465
+      },
+      "missingAnnotations": 0
+    }
+  },
+  "participantOverlap": {
+    "train / valid": 0,
+    "test / train": 0,
+    "test / valid": 0
+  },
+  "missingVideoPaths": [],
+  "labelFields": [
+    "frame_dir",
+    "total_frames",
+    "img_shape",
+    "label",
+    "heart_rate",
+    "sport",
+    "sex",
+    "age",
+    "height",
+    "weight"
+  ],
+  "importantLimits": [
+    "Labels are energy expenditure, not VO2.",
+    "No explicit speed field exists in label rows.",
+    "Protocol speed, steady-state segment eligibility and unit conversions require verification before economy modelling.",
+    "MediaPipe extraction has not yet been evaluated on this dataset."
+  ]
+}
