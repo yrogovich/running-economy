@@ -31,3 +31,13 @@ The screenshot `preview.jpg` records the desktop empty state, not an analyzed at
 - Pace/HR pilot: corrected missing zero-HR handling, retained one prespecified view instead of merging unequal cross-view metabolic labels. Nested runner-separated evaluation over 2,334 windows / 18 runners produced 23.0% mean runner-relative error and 79.9% worst-runner error. No estimator deployed.
 - Original gas-exchange workbooks read without modification. Confirmed units and one example of each sex code; treadmill speed remains inferred from protocol.
 - Latest browser check could not execute: automatic browser approval reported workspace credits exhausted. This is not a test pass. Existing local server returned HTTP 200 and was left running because this turn did not own it.
+
+
+## Leg alignment correction — 2026-11-11
+
+- Replaced full with official MediaPipe heavy model (float16 version 1), bundled locally. Reset temporal model state between views and analysis runs.
+- Display refresh uses presented video frame timestamps. Full clip sampling replaces the previous 20-second limit. Longest continuous quality segment now uses a linear scan.
+- Low-visibility but geometrically plausible positions are displayed in dashed amber; metric gating remains at 0.65. No coordinates are repositioned by the renderer.
+- Same 10-second treadmill fixture analyzed in the in-app browser: 300/300 frames with poses, 0 frames with rejected leg chains in visualization mode. Reviewed all 300 browser-generated frames on 12 contact sheets under research/tracking-review. No prior leg-on-console failure observed; small foot offsets and occluded-knee uncertainty remain. This is visual QA, not ground-truth accuracy validation.
+- 16 unit tests pass, covering separate visualization/measurement thresholds and overlay timestamps.
+- Full-body measurement coverage is only 6% with the heavy model on this occluded clip; measurements remain withheld. Do not lower measurement gates just to obtain a score.

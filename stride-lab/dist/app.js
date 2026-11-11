@@ -1,3 +1,4 @@
+import {screenedPoints,frameAtTime} from './tracking.js';
 import {analyzeFrames, recommendations, oxygenCost, SOURCES} from './metrics.js';
 import {validationBundle} from './validation.js';
 import {captureRunContext} from './context.js';
@@ -16,7 +17,7 @@ $('#uploads').addEventListener('change',async e=>{
  if(file.size>300*1024*1024){status('This prototype accepts clips up to 300 MB. Trim the clip to 5–20 seconds.');return;}
  if(clips.has(angle))URL.revokeObjectURL(clips.get(angle).url);
  clips.set(angle,{file,url:URL.createObjectURL(file),frames:[]});invalidate();uploads();
- try{await preview(angle);status('Ready. Analysis uses the first 20 seconds of each clip.');}catch(err){status(err.message);}
+ try{await preview(angle);status('Ready. Analysis tracks the full clip at 30 samples per second. Longer clips take more time.');}catch(err){status(err.message);}
 });
 $('#uploads').addEventListener('click',async e=>{
  if(busy||loadingClip)return;
@@ -46,7 +47,7 @@ async function loadModel(){
  status('Loading pose model… First use needs an internet connection.');
  const {FilesetResolver,PoseLandmarker}=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/vision_bundle.mjs');
  const files=await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm');
- const options={baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task',delegate:'GPU'},runningMode:'VIDEO',numPoses:1,minPoseDetectionConfidence:.6,minTrackingConfidence:.6,minPosePresenceConfidence:.6};
+ const options={baseOptions:{modelAssetPath:'./models/pose_landmarker_heavy.task',delegate:'GPU'},runningMode:'VIDEO',numPoses:1,minPoseDetectionConfidence:.6,minTrackingConfidence:.6,minPosePresenceConfidence:.6};
  try{model=await PoseLandmarker.createFromOptions(files,options);}catch{options.baseOptions.delegate='CPU';model=await PoseLandmarker.createFromOptions(files,options);}
  connections=PoseLandmarker.POSE_CONNECTIONS;
 }
@@ -57,12 +58,15 @@ $('#analyze').addEventListener('click',async()=>{
  busy=true;cancelled=false;invalidate();uploads();$('#cancel').hidden=false;$('#progress').hidden=false;$('#progress').value=0;video.controls=false;
  try{
   analysisContext=context;sessionId=crypto.randomUUID();
+  if(model){model.close();model=null;}
   await loadModel();let index=0;
   for(const [angle,clip] of clips){
    if(cancelled)break;await preview(angle);video.controls=false;
+   // Start each independent view with fresh temporal tracking state.
+   if(index>0){model.close();model=null;await loadModel();}
    if(!Number.isFinite(video.duration)||video.duration<5)throw new Error('Each clip must be at least 5 seconds long and have a readable duration.');
    clip.width=video.videoWidth;clip.height=video.videoHeight;clip.duration=video.duration;
-   const duration=Math.min(video.duration,20),frames=[];
+   const duration=video.duration,frames=[];
    for(let frameIndex=0;frameIndex<Math.floor(duration*30);frameIndex++){
     const t=frameIndex/30;
     if(cancelled)break;await seek(t);stamp+=1000/30;
@@ -80,20 +84,27 @@ $('#analyze').addEventListener('click',async()=>{
  finally{busy=false;uploads();$('#cancel').hidden=true;$('#progress').hidden=true;video.controls=true;}
 });
 $('#cancel').addEventListener('click',()=>{cancelled=true;status('Cancelling after the current frame…');});
-function draw(points){
+function draw(points,mediaTime=video.currentTime){
  ctx.clearRect(0,0,canvas.width,canvas.height);canvas.hidden=!$('#skeleton').checked;
- if(!points){const frames=clips.get(active)?.frames;if(!frames?.length)return;points=frames[Math.min(frames.length-1,Math.round(video.currentTime*30))]?.points;}
+ if(!points){const frames=clips.get(active)?.frames;if(!frames?.length)return;points=frameAtTime(frames,mediaTime)?.points;}
  if(!points)return;
- const good=p=>p && (p.visibility??0)>.65;
+ points=screenedPoints(points,canvas.width,canvas.height,0);
+ const good=p=>p && Number.isFinite(p.x) && Number.isFinite(p.y) && p.x>=0 && p.x<=1 && p.y>=0 && p.y<=1;
  ctx.strokeStyle='#b6f379';ctx.fillStyle='#e9ffce';ctx.lineWidth=Math.max(2,canvas.width/350);
- for(const {start,end} of connections){const a=points[start],b=points[end];if(!good(a)||!good(b))continue;ctx.beginPath();ctx.moveTo(a.x*canvas.width,a.y*canvas.height);ctx.lineTo(b.x*canvas.width,b.y*canvas.height);ctx.stroke();}
- for(const p of points){if(!good(p))continue;ctx.beginPath();ctx.arc(p.x*canvas.width,p.y*canvas.height,Math.max(3,canvas.width/230),0,Math.PI*2);ctx.fill();}
+ for(const {start,end} of connections){const a=points[start],b=points[end];if(!good(a)||!good(b))continue;const uncertain=Math.min(a.visibility??0,b.visibility??0)<.65;ctx.strokeStyle=uncertain?'#ffc46b':'#b6f379';ctx.setLineDash(uncertain?[canvas.width/100,canvas.width/150]:[]);ctx.beginPath();ctx.moveTo(a.x*canvas.width,a.y*canvas.height);ctx.lineTo(b.x*canvas.width,b.y*canvas.height);ctx.stroke();}
+ ctx.setLineDash([]);
+ for(const p of points){if(!good(p))continue;ctx.fillStyle=(p.visibility??0)<.65?'#ffc46b':'#e9ffce';ctx.beginPath();ctx.arc(p.x*canvas.width,p.y*canvas.height,Math.max(3,canvas.width/230),0,Math.PI*2);ctx.fill();}
 }
 video.addEventListener('timeupdate',()=>{if(!busy)draw();});video.addEventListener('seeked',()=>{if(!busy)draw();});$('#skeleton').addEventListener('change',()=>draw());
+// Use the timestamp of the displayed video frame, not sparse timeupdate events.
+if(video.requestVideoFrameCallback){
+ const onFrame=(_now,metadata)=>{if(!busy)draw(undefined,metadata.mediaTime);video.requestVideoFrameCallback(onFrame);};
+ video.requestVideoFrameCallback(onFrame);
+}
 function renderReports(){
  $('#results').hidden=false;
  $('#recorded-context').textContent=`Context captured at analysis: ${analysisContext.speedKmh??'unknown'} km/h · ${analysisContext.surface} · ${analysisContext.averageHeartRateBpm??'unknown'} bpm. If incorrect, rerun analysis before pairing a lab label.`;
- $('#reports').innerHTML=reports.map(r=>`<article class="panel report"><div class="section-top"><h2>${esc(r.angle[0].toUpperCase()+r.angle.slice(1))} view</h2><span class="pill">${r.usable?'EXPERIMENTAL MEASUREMENTS':'RECORDING NEEDS IMPROVEMENT'}</span></div><p class="muted">${Math.round(r.coverage*100)}% usable frames · ${r.duration.toFixed(1)} seconds sampled · ${esc(r.fileName)}</p>${r.usable?`<div class="metrics"><div class="metric"><span>Estimated cadence</span><b>${r.cadence?r.cadence.spm:'—'}</b><small>${r.cadence?'steps/min · verify manually':r.angle==='side'?'No stable signal':'Requires side view'}</small></div><div class="metric"><span>${r.angle==='side'?'Projected torso tilt':'Projected pelvis-line tilt'}</span><b>${(r.trunk??r.pelvis).toFixed(1)}°</b><small>Median 2D angle · no ideal target</small></div><div class="metric"><span>Running economy</span><b>Unmeasured</b><small>Requires metabolic testing</small></div></div>`:''}${r.advice.map(a=>`<div class="advice"><h3>${esc(a.title)}</h3><p>${esc(a.text)}</p><a href="${a.source}" target="_blank" rel="noreferrer">Evidence & limitations ↗</a></div>`).join('')}<p class="fine">Tracking visibility is a model signal, not a calibrated probability of accuracy. Quality cutoffs are prototype heuristics. No ground-contact time, force, injury-risk, or 3D reconstruction is inferred.</p></article>`).join('');
+ $('#reports').innerHTML=reports.map(r=>`<article class="panel report"><div class="section-top"><h2>${esc(r.angle[0].toUpperCase()+r.angle.slice(1))} view</h2><span class="pill">${r.usable?'EXPERIMENTAL MEASUREMENTS':'RECORDING NEEDS IMPROVEMENT'}</span></div><p class="muted">${Math.round(r.coverage*100)}% passed tracking checks · ${r.duration.toFixed(1)} seconds sampled · ${esc(r.fileName)}</p>${r.usable?`<div class="metrics"><div class="metric"><span>Estimated cadence</span><b>${r.cadence?r.cadence.spm:'—'}</b><small>${r.cadence?'steps/min · verify manually':r.angle==='side'?'No stable signal':'Requires side view'}</small></div><div class="metric"><span>${r.angle==='side'?'Projected torso tilt':'Projected pelvis-line tilt'}</span><b>${(r.trunk??r.pelvis).toFixed(1)}°</b><small>Median 2D angle · no ideal target</small></div><div class="metric"><span>Running economy</span><b>Unmeasured</b><small>Requires metabolic testing</small></div></div>`:''}${r.advice.map(a=>`<div class="advice"><h3>${esc(a.title)}</h3><p>${esc(a.text)}</p><a href="${a.source}" target="_blank" rel="noreferrer">Evidence & limitations ↗</a></div>`).join('')}<p class="fine">Tracking visibility is a model signal, not a calibrated probability of accuracy. Quality cutoffs are prototype heuristics. No ground-contact time, force, injury-risk, or 3D reconstruction is inferred.</p></article>`).join('');
 }
 function lab(){const cost=oxygenCost(Number($('#vo2').value),Number($('#speed').value));$('#lab-result').textContent=cost?`${cost.toFixed(1)} mL O₂/kg/km — calculated oxygen cost`:'Enter valid oxygen uptake (1–100) and speed (3–30 km/h).';}
 $('#vo2').addEventListener('input',lab);$('#speed').addEventListener('input',lab);

@@ -1,6 +1,6 @@
 # Stride Lab
 
-Browser-based running movement research prototype. Static ES modules; no build step, server upload, API key, or database. Files remain in browser memory and are discarded on refresh. Third-party requests load Google fonts, pinned MediaPipe 0.10.32 code/WASM (jsDelivr), and Google's full pose model. This is not fully offline software.
+Browser-based running movement research prototype. Static ES modules; no build step, server upload, API key, or database. Files remain in browser memory and are discarded on refresh. Third-party requests load Google fonts, pinned MediaPipe 0.10.32 code/WASM (jsDelivr), with Google's heavy pose model served locally from dist/models. This is not fully offline software.
 
 ## Run
 
@@ -11,7 +11,7 @@ npm run dev
 npm test
 ```
 
-Choose side, front, and/or rear clips. Normal-speed H.264 MP4 is recommended; actual MOV/HEVC support depends on the browser. Maximum 300 MB per clip; first 20 seconds sampled at 30 Hz. Clips under 5 seconds are rejected. Analysis uses GPU with CPU fallback, supports cancellation, displays landmarks, and exports JSON observations with research links.
+Choose side, front, and/or rear clips. Normal-speed H.264 MP4 is recommended; actual MOV/HEVC support depends on the browser. Maximum 300 MB per clip; full duration sampled at 30 Hz. Clips under 5 seconds are rejected. Analysis uses GPU with CPU fallback, supports cancellation, displays landmarks, and exports JSON observations with research links.
 
 ## Scope and scientific limits
 

@@ -1,3 +1,4 @@
+import {screenedPoints} from './tracking.js';
 export const SOURCES = {
  economy: 'https://pubmed.ncbi.nlm.nih.gov/38446400/',
  cadence: 'https://link.springer.com/article/10.1186/s40798-026-01120-y',
@@ -33,6 +34,7 @@ export function cadenceFromSignal(samples) {
  return null;
 }
 export function analyzeFrames(frames, angle, width, height) {
+ frames=frames.map(f=>({...f,points:screenedPoints(f.points,width,height)}));
  const required=angle==='side'?[11,12,23,24,25,26,27,28]:[11,12,23,24,27,28];
  const valid=frames.filter(f=>f.points && required.every(i=>{const p=f.points[i];return p && p.visibility>=.65 && p.x>.01&&p.x<.99&&p.y>.01&&p.y<.99;}));
  const coverage=frames.length?valid.length/frames.length:0;
@@ -42,8 +44,9 @@ export function analyzeFrames(frames, angle, width, height) {
  const tilt=valid.map(f=>{const p=f.points,sx=(p[11].x+p[12].x)/2,sy=(p[11].y+p[12].y)/2,hx=(p[23].x+p[24].x)/2,hy=(p[23].y+p[24].y)/2;return Math.atan2(Math.abs(sx-hx)*aspect,Math.abs(sy-hy))*180/Math.PI;});
  const pelvis=valid.map(f=>{const p=f.points;return Math.atan2(Math.abs(p[23].y-p[24].y),Math.abs(p[23].x-p[24].x)*aspect)*180/Math.PI;});
  // Cadence only from a continuous valid section of side-view footage.
- let longest=[],run=[];
- for(const f of frames){if(valid.includes(f)){run.push(f);if(run.length>longest.length)longest=[...run];}else run=[];}
+ const validSet=new Set(valid);let runStart=0,bestStart=0,bestLength=0;
+ for(let i=0;i<frames.length;i++){if(!validSet.has(frames[i])){runStart=i+1;continue;}const length=i-runStart+1;if(length>bestLength){bestStart=runStart;bestLength=length;}}
+ const longest=frames.slice(bestStart,bestStart+bestLength);
  const signal=longest.map(f=>{const p=f.points,torso=Math.hypot(((p[11].x+p[12].x-p[23].x-p[24].x)/2)*aspect,(p[11].y+p[12].y-p[23].y-p[24].y)/2);return {t:f.t,value:(p[27].x-p[28].x)*aspect/Math.max(.05,torso)};});
  return {...base,usable:true,cadence:angle==='side'?cadenceFromSignal(signal):null,trunk:angle==='side'?quantile(tilt,.5):null,pelvis:angle!=='side'?quantile(pelvis,.5):null};
 }

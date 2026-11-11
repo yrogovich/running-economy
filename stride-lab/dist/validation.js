@@ -11,7 +11,7 @@ export function validationBundle({sessionId, context, clips, reports, lab}) {
   label={kind:'user_attested_steady_state_lab_measurement',runnerCode:lab.runnerCode,vo2MlKgMin:lab.vo2,speedKmh:context.speedKmh,oxygenCostMlKgKm:cost,independentlyVerified:false};
  }
  return {schema:'stride-lab.pose-session',schemaVersion:1,sessionId,generatedAt:new Date().toISOString(),
-  extractor:{name:'MediaPipe Pose Landmarker full',version:'0.10.32',requestedSamplingHz:30,coordinates:'x/y normalized to image dimensions; z is model-relative depth, not calibrated metres',landmarkCount:33},
+  extractor:{name:'MediaPipe Pose Landmarker heavy',version:'0.10.32',requestedSamplingHz:30,coordinates:'x/y normalized to image dimensions; z is model-relative depth, not calibrated metres',landmarkCount:33},
   context:{speedKmh:context.speedKmh,surface:context.surface,averageHeartRateBpm:context.averageHeartRateBpm??null},label,
   limitations:['Views are independent; not synchronized 3D.','Requested sample times may differ from decoded frame times.','Visibility is not calibrated measurement accuracy.','User-attested labels require review before model training.'],
   clips:clips.map(c=>({angle:c.angle,width:c.width,height:c.height,sourceDurationSeconds:c.duration,
