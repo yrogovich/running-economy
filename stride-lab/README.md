@@ -64,3 +64,12 @@ Speed is inferred from the published protocol: men 8/10/12 km/h and women 7/9/11
 Research outputs: `research/pilot-evaluation.json`, `research/multimodal-evaluation.json`, and `research/reproducibility.json`. The temporary Python environment is `/tmp/stride-lab-research-env`; package versions are recorded in `research/research-requirements.lock.txt`. Eight original app tests plus four context tests pass, along with three research-feature tests. New browser verification is blocked by the browser approval service's workspace-credit error. The existing user-started local server was not stopped.
 
 Remaining work includes testing the user's actual videos, validating event-level gait observations, and obtaining a model/data combination that adds credible personal economy information beyond a pace baseline. No economy score, percentage improvement, or injury-risk claim is currently supported.
+
+
+## Technique report for recreational runners (2026-11-12)
+
+The report evaluates torso and each leg separately, so an obscured far leg no longer discards a clear visible-leg rhythm or torso observation. It includes estimated cadence from one continuous leg signal, projected torso-angle distribution, and a visible-knee angle distribution. Each finding links to a representative video time, explains its practical use and limits, and provides a next check.
+
+A next-run plan supports a repeatable baseline and an optional modest cadence experiment after manual verification. Comfort and perceived effort are self-reported, not inferred. Explicitly saved baselines stay in browser localStorage; no video or pose coordinates are saved there. Comparisons require matching view, recorded speed within 0.2 km/h, and surface. Click Update comparison after entering a new effort rating. Report JSON and browser print/PDF are available.
+
+Commercial readiness remains unproven: no customer has yet validated usefulness or willingness to pay. Measurements are still experimental, and a coach-reviewed set of real recreational-runner clips is needed before claiming personalized corrective accuracy.

@@ -41,3 +41,13 @@ The screenshot `preview.jpg` records the desktop empty state, not an analyzed at
 - Same 10-second treadmill fixture analyzed in the in-app browser: 300/300 frames with poses, 0 frames with rejected leg chains in visualization mode. Reviewed all 300 browser-generated frames on 12 contact sheets under research/tracking-review. No prior leg-on-console failure observed; small foot offsets and occluded-knee uncertainty remain. This is visual QA, not ground-truth accuracy validation.
 - 16 unit tests pass, covering separate visualization/measurement thresholds and overlay timestamps.
 - Full-body measurement coverage is only 6% with the heavy model on this occluded clip; measurements remain withheld. Do not lower measurement gates just to obtain a score.
+
+
+## Recreational-runner report — 2026-11-12
+
+- 22 unit tests pass, including missing far-leg tolerance, withholding unsupported cadence, evidence timestamps, matched-condition comparisons and missing effort ratings.
+- Browser analysis of the same 10-second fixture produced 148 steps/min from the continuously visible leg, 13.2-degree projected torso median, and 119–164-degree central knee-angle range. These are observations, not validated reference measurements.
+- Evidence button verified by reading video currentTime = 9.1 seconds. Report styling checked at the browser's narrow viewport (40px metric text).
+- Explicit local baseline save/readback showed zero deltas against itself and retained test effort/comfort; test baseline was then cleared. Example speed 10 km/h was entered solely to exercise comparison matching.
+- Print/PDF control exists; pagination and PDF output have not yet been visually validated. Latest Update comparison button needs browser verification.
+- User selected recreational runners improving comfort and efficiency. Product usefulness and willingness to pay remain untested.

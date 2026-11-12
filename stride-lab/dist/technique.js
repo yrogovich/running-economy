@@ -40,5 +40,6 @@ export function compareTechnique(current,previous){
  if(!Number.isFinite(current.context.speedKmh)||!Number.isFinite(previous.context?.speedKmh))return {compatible:false,reason:'Record speed for both sessions to compare technique at a similar pace.'};
  if(Math.abs(current.context.speedKmh-previous.context.speedKmh)>.2||current.context.surface!==previous.context.surface)return {compatible:false,reason:'Match speed (within 0.2 km/h) and surface before comparing. This matching tolerance is a product rule, not physiological equivalence.'};
  const changes=current.findings.flatMap(f=>{const old=previous.findings?.find(p=>p.id===f.id);return old&&Number.isFinite(old.value)?[{title:f.title,delta:+(f.value-old.value).toFixed(1),unit:f.unit}]:[]});
+ if(Number.isFinite(current.selfReport?.effort)&&Number.isFinite(previous.selfReport?.effort))changes.push({title:'Your reported effort',delta:current.selfReport.effort-previous.selfReport.effort,unit:'/10'});
  return {compatible:true,changes,reason:'Descriptive changes only. Match shoes, camera, warm-up and effort; differences do not establish improvement.'};
 }
